@@ -6,20 +6,41 @@
 
 package pkg3dengine;
 
+import javafx.scene.paint.Color;
+
 /**
  *
  * @author rpetit
  */
 public class RGBA {
-    double Blue;
-    double Green;
-    double Red;
-    double Alpha;
+    double Blue=0;
+    double Green=0;
+    double Red=0;
+    double Alpha=1;
     
+    /**
+     * 
+     * @param r
+     * @param g
+     * @param b
+     * @param a 
+     */
     public RGBA(double r,double g,double b,double a){
         Blue=b;
         Green=g;
         Red=r;
         Alpha=a;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public Color toColor(){
+        if(Alpha>1) Alpha=1;
+        Red=Red/255;
+        Green=Green/255;
+        Blue=Blue/255;
+        return new Color(Red,Green,Blue,Alpha);
     }
 }

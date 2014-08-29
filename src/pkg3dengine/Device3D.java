@@ -7,6 +7,11 @@
 package pkg3dengine;
 
 import java.util.ArrayList;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -14,40 +19,41 @@ import java.util.ArrayList;
  */
 public class Device3D {
     
-    private final int[] FbackBuffer;
+    //x,y
+    private final RGBA[][] FbackBuffer;
     private double Fwidth;
     private double Fheight;
+    private ImageView Fimg;
     
     public Device3D(double width,double height){
         Fwidth=width;
         Fheight=height;
         // the back buffer size is equal to the number of pixels to draw
         // on screen (width*height) * 4 (R,G,B & Alpha values). 
-        FbackBuffer=new int[(int)(width * height * 4)];
+        FbackBuffer=new RGBA[(int)width][(int)height];
+    }
+    
+    public Device3D(ImageView i){
+        Fimg=i;
+        Fwidth=i.getFitWidth();
+        Fheight=i.getFitHeight();
+        // the back buffer size is equal to the number of pixels to draw
+        // on screen (width*height) * 4 (R,G,B & Alpha values). 
+        FbackBuffer=new RGBA[(int)Fwidth][(int)Fheight];
     }
    
     // This method is called to clear the back buffer with a specific color
     public final void clear(int r, int g, int b, int a){
-        for (int index = 0; index < FbackBuffer.length; index += 4){
-                // BGRA is used by Windows instead by RGBA in HTML5
-                FbackBuffer[index] = b;
-                FbackBuffer[index + 1] = g;
-                FbackBuffer[index + 2] = r;
-                FbackBuffer[index + 3] = a;
+        for (int x = 0; x < Fwidth; x++){
+            for (int y = 0; y < Fheight; y++){
+                FbackBuffer[x][y] = new RGBA(r,g,b,a);
             }
+        }
     }
     
     // Called to put a pixel on screen at a specific X,Y coordinates
     public final void putPixel(double x, double y, RGBA color) {
-        // As we have a 1-D Array for our back buffer
-            // we need to know the equivalent cell in 1-D based
-            // on the 2D coordinates on screen
-            int index = (int)((x + y * Fwidth) * 4);
-
-            FbackBuffer[index] = (byte)(color.Blue * 255);
-            FbackBuffer[index + 1] = (byte)(color.Green * 255);
-            FbackBuffer[index + 2] = (byte)(color.Red * 255);
-            FbackBuffer[index + 3] = (byte)(color.Alpha * 255);
+        FbackBuffer[(int)x][(int)y] = color;
     }
     
     // Project takes some 3D coordinates and transform them
@@ -55,12 +61,12 @@ public class Device3D {
         public final Vector2D project(Vector3D coord, Matrix3D transMat)
         {
             // transforming the coordinates
-            Vector2D point = Vector3D.TransformCoordinate(coord, transMat);
+            Vector2D point = coord.transformCoordinate(transMat);
             // The transformed coordinates will be based on coordinate system
             // starting on the center of the screen. But drawing on screen normally starts
             // from top left. We then need to transform them again to have x:0, y:0 on top left.
-            double x = point.X() * Fwidth + Fwidth / 2.0f;
-            double y = -point.Y() * Fheight + Fheight / 2.0f;
+            double x = point.X() * Fwidth + Fwidth / 2.0;
+            double y = -point.Y() * Fheight + Fheight / 2.0;
             return (new Vector2D(x, y));
         }
         
@@ -71,7 +77,7 @@ public class Device3D {
             if (point.X() >= 0 && point.Y() >= 0 && point.X() < Fwidth && point.Y() < Fheight)
             {
                 // Drawing a yellow point
-                putPixel(point.X(), point.Y(), new RGBA(1.0f, 1.0f, 0.0f, 1.0f));
+                putPixel(point.X(), point.Y(), new RGBA(255, 255, 255, 1));
             }
         }
         
@@ -80,19 +86,19 @@ public class Device3D {
         public final void render(Camera3D camera, ArrayList<Mesh3D> meshes)
         {
             // To understand this part, please read the prerequisites resources
-            Matrix3D viewMatrix = Matrix3D.LookAtLH(camera.getPosition(), camera.getTarget(), Vector3D.UnitY);
-            Matrix3D projectionMatrix = Matrix3D.PerspectiveFovRH(0.78f, 
-                                                           Fwidth / Fheight, 
-                                                           0.01f, 1.0f);
+            Matrix3D viewMatrix = Matrix3D.lookAtRH(camera.getPosition(), camera.getTarget(), camera.getHead());
+            Matrix3D projectionMatrix = Matrix3D.perspectiveFovRH(45,Fwidth / Fheight,0.01, 1.0);
 
-            for(int i=0;i<meshes.length;i++){
-                Mesh3D mesh=meshes[i];
+            for(int i=0;i<meshes.size();i++){
+                Mesh3D mesh=meshes.get(i);
                 // Beware to apply rotation before translation 
-                Matrix3D worldMatrix = Matrix3D.RotationYawPitchRoll(mesh.getRotation().Y()), 
-                                                              mesh.getRotation().X(), mesh.getRotation().Z()) * 
-                                  Matrix3D.Translation(mesh.Position);
-
-                Matrix3D transformMatrix = worldMatrix * viewMatrix * projectionMatrix;
+                Matrix3D rotMat=Matrix3D.rotation(mesh.getRotation().X(),mesh.getRotation().Y(), mesh.getRotation().Z());
+                Matrix3D transMat=Matrix3D.translation(mesh.getPosition());
+                Matrix3D[] t;
+                t=new Matrix3D[]{rotMat,transMat};
+                Matrix3D worldMatrix = Matrix3D.multiply(t);
+                t=new Matrix3D[]{worldMatrix ,viewMatrix , projectionMatrix};
+                Matrix3D transformMatrix = Matrix3D.multiply(t);
 
                 for(int j=0;j<mesh.getVertices().size();j++)
                 {
@@ -103,10 +109,21 @@ public class Device3D {
                     drawPoint(point);
                 }
             }
+            
         }
 
         public final void present(){
+            WritableImage wImage = new WritableImage((int)Fwidth, (int)Fheight);
+            PixelWriter pixelWriter = wImage.getPixelWriter();
             
+            // Determine the color of each pixel in a specified row
+            for(int x=0; x<Fwidth;x++){
+                for(int y=0;y<Fheight;y++){
+                    pixelWriter.setColor(x,y,FbackBuffer[x][y].toColor());
+                }
+            }
+            Fimg.setImage(wImage);
         }
+            
         
 }

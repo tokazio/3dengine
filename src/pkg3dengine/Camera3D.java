@@ -13,6 +13,13 @@ package pkg3dengine;
 public class Camera3D {
     private Vector3D Fposition;
     private Vector3D Ftarget;
+    private Vector3D Fhead;
+    
+    
+    public Camera3D(){
+        // Head is up (set to 0,-1,0 to look upside-down)
+        Fhead=new Vector3D(0.0,-1.0,0.0);
+    }
     
     public final Vector3D getPosition(){
         return Fposition;
@@ -20,6 +27,10 @@ public class Camera3D {
     
     public final Vector3D getTarget(){
         return Ftarget;
+    }
+    
+    public final Vector3D getHead(){
+        return Fhead;
     }
 
     public final void setPosition(Vector3D v) {

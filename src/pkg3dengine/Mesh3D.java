@@ -17,21 +17,19 @@ public class Mesh3D {
     private final ArrayList<Vector3D> Fvertices;
     private Vector3D Fposition;
     private Vector3D Frotation;
-    private Vector3D Ftranslation;
     
     public Mesh3D(String aName) {
         Fname=aName;
         Fvertices = new ArrayList();
         Fposition=Vector3D.zero();
         Frotation=Vector3D.zero();
-        Ftranslation=Vector3D.zero();
     }
     
     public final void add(Vector3D aVector){
         Fvertices.add(aVector);
     }
     
-    public final ArrayList getVertices(){
+    public final ArrayList<Vector3D> getVertices(){
         return Fvertices;
     }
     
@@ -39,8 +37,8 @@ public class Mesh3D {
         return Frotation;
     }
     
-    public final Vector3D getTranslation(){
-        return Ftranslation;
+    public final Vector3D getPosition(){
+        return Fposition;
     }
     
     public final void setPosition(Vector3D v){
@@ -51,7 +49,4 @@ public class Mesh3D {
         Frotation=v;
     }
     
-    public final void setTranslation(Vector3D v){
-        Ftranslation=v;
-    }
 }
