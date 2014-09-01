@@ -78,7 +78,7 @@ public class Device3D {
 
     public final void init(Camera3D camera) {
 	FviewMatrix = Matrix3D.lookAtLH(camera.getPosition(), camera.getTarget(), camera.getHead());
-	FprojectionMatrix = Matrix3D.perspectiveFovLH(45, Fwidth / Fheight, 0.01, 1.0);
+	FprojectionMatrix = Matrix3D.perspectiveFovLH(45, Fwidth / Fheight, 1, 100.0);
     }
 
         // The main method of the engine that re-compute each vertex projection

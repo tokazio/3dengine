@@ -35,12 +35,24 @@ public class Vector3D {
         return new Vector3D(0,0,0);
     }
     
+    /**
+     * http://msdn.microsoft.com/en-us/library/windows/desktop/bb153109(v=vs.85).aspx
+     * @param b
+     * @return 
+     */
     public final Vector3D transformCoordinate(Matrix3D b){
+        /*
+        vWorking.x = (vCoordinate.x * mTransform._11) + (vCoordinate.y * mTransform._21) + (vCoordinate.z * mTransform._31) + mTransform._41;
+    vWorking.y = (vCoordinate.x * mTransform._12) + (vCoordinate.y * mTransform._22) + (vCoordinate.z * mTransform._32) + mTransform._42;
+    vWorking.z = (vCoordinate.x * mTransform._13) + (vCoordinate.y * mTransform._23) + (vCoordinate.z * mTransform._33) + mTransform._43;
+    vWorking.w = 1 / ((vCoordinate.x * mTransform._14) + (vCoordinate.y * mTransform._24) + (vCoordinate.z * mTransform._34) + mTransform._44);
+    return D3DXVECTOR3(vWorking.x * vWorking.w, vWorking.y * vWorking.w, vWorking.z * vWorking.w);
+        */
 	double d=X()*b.get(0,0)+Y()*b.get(1,0)+Z()*b.get(2,0)+b.get(3,0);
 	double e=X()*b.get(0,1)+Y()*b.get(1,1)+Z()*b.get(2,1)+b.get(3,1);
 	double f=X()*b.get(0,2)+Y()*b.get(1,2)+Z()*b.get(2,2)+b.get(3,2);
 	double g=X()*b.get(0,3)+Y()*b.get(1,3)+Z()*b.get(3,3)+b.get(3,3);
-        return new Vector3D(d/g,e/g,f/g);
+        return new Vector3D(d*g,e*g,f*g);
     }
 
     /**

@@ -7,6 +7,7 @@ package pkg3dengine;
 
 /**
  * http://www.cs.princeton.edu/~gewang/projects/darth/stuff/quat_faq.html#Q26
+ *
  * @author rpetit
  */
 public class Matrix3D {
@@ -46,10 +47,10 @@ public class Matrix3D {
         Fmat = new double[][]{{a, 0, 0, 0}, {b, 0, 0, 0}, {c, 0, 0, 0}, {d, 0, 0, 0}};
     }
 
-    public final double get(int row,int col){
-	return Fmat[row][col];
+    public final double get(int row, int col) {
+        return Fmat[row][col];
     }
-    
+
     /**
      *
      * @param a
@@ -226,22 +227,21 @@ public class Matrix3D {
         });
     }
 
-    
     /**
-     * 
+     *
      * @param x
      * @param y
      * @param z
-     * @return 
+     * @return
      */
-    public static Matrix3D rotation(double x,double y, double z) {
-        return rotation(new Vector3D(x,y,z));
+    public static Matrix3D rotation(double x, double y, double z) {
+        return rotation(new Vector3D(x, y, z));
     }
-    
+
     /**
-     * 
+     *
      * @param aVector
-     * @return 
+     * @return
      */
     public static Matrix3D rotation(Vector3D aVector) {
         //ordre de multiplication des matrices de rotation X.Y.Z
@@ -276,50 +276,52 @@ public class Matrix3D {
         });
 
     }
-    
-    public static Matrix3D lookAtLH(Vector3D eye,Vector3D target,Vector3D head){
-        Vector3D zaxis = Vector3D.sub(eye,target).normal();    // The "forward" vector.
+
+    /**
+     * http://msdn.microsoft.com/en-us/library/windows/desktop/bb281710(v=vs.85).aspx
+     *
+     * @param eye Position de la caméra
+     * @param target Position où vise la caméra
+     * @param head Vertical vers le haut (0,1,0)
+     * @return
+     */
+    public static Matrix3D lookAtLH(Vector3D eye, Vector3D target, Vector3D head) {
+        Vector3D zaxis = Vector3D.sub(target, eye).normal();    // The "forward" vector.
         Vector3D xaxis = Vector3D.cross(head, zaxis).normal();// The "right" vector.
         Vector3D yaxis = Vector3D.cross(zaxis, xaxis).normal();     // The "up" vector.
- 
-    // Create a 4x4 view matrix from the right, up, forward and eye position vectors
-    return new Matrix3D(new double[][]{
-        {      xaxis.X(),            yaxis.X(),            zaxis.X(),       0 },
-        {      xaxis.Y(),            yaxis.Y(),            zaxis.Y(),       0 },
-        {      xaxis.Z(),            yaxis.Z(),            zaxis.Z(),       0 },
-        {       -Vector3D.dot( xaxis, eye ), -Vector3D.dot( yaxis, eye ), -Vector3D.dot( zaxis, eye ),  1 }
-    });     
-    }
-    
-    public static Matrix3D orthographicFovRH(double left,double top,double right, double bottom,double ncp, double fcp){
-        //private double FoV=45;         // The horizontal Field of View, in degrees : the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
-        //private double Fratio=4.0 / 3.0; // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
-        //private double Fncp=0.1;        // Near clipping plane. Keep as big as possible, or you'll get precision issues.
-        //private double Ffcp=100.0;       // Far clipping plane. Keep as little as possible.
         return new Matrix3D(new double[][]{
-            {right-left,0,0,0},
-            {0,top-bottom,0,0},
-            {0,0,fcp-ncp,0},
-            {-(right + left) / (right - left),-(top + bottom) / (top - bottom),-(fcp + ncp) / (fcp - ncp),1}            
-        });
-    }
-    
-    public static Matrix3D perspectiveFovLH(double FoV,double ratio,double ncp, double fcp){
-        //	a.Matrix.PerspectiveFovLHToRef(b->Math.PI/2->a,c->1,d.minZ,d.maxZ,this._projectionMatrix)
-	//private double FoV=45;         // The horizontal Field of View, in degrees : the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
-        //private double Fratio=4.0 / 3.0; // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
-        //private double Fncp=0.1;        // Near clipping plane. Keep as big as possible, or you'll get precision issues.
-        //private double Ffcp=100.0;       // Far clipping plane. Keep as little as possible.
-        double f = 1/Math.tan(0.5*degToRad(FoV)); 
-	return new Matrix3D(new double[][]{
-            {f/ratio,0,0,0},
-            {0, f,0,0},
-            {0,0,-ncp/(fcp-ncp),1},
-            {0,0,(fcp * ncp) / (fcp - ncp),0}     
+            {xaxis.X(), yaxis.X(), zaxis.X(), 0},
+            {xaxis.Y(), yaxis.Y(), zaxis.Y(), 0},
+            {xaxis.Z(), yaxis.Z(), zaxis.Z(), 0},
+            {-Vector3D.dot(xaxis, eye), -Vector3D.dot(yaxis, eye), -Vector3D.dot(zaxis, eye), 1}
         });
     }
 
-    public static double degToRad(double deg){
-        return (java.lang.Math.PI*deg)/180;
+    /**
+     * http://msdn.microsoft.com/en-us/library/windows/desktop/bb281727(v=vs.85).aspx
+     *
+     * @param FoV FieldOfView en dégré
+     * @param ratio Aspect ratio (1 pour une vue carrée ou w/h)
+     * @param ncp Near clipping plane distance (z devant)
+     * @param fcp Far clipping plane distance (z fond)
+     * @return
+     */
+    public static Matrix3D perspectiveFovLH(double FoV, double ratio, double ncp, double fcp) {
+        double h = Math.tan(Math.PI / 2 - degToRad(FoV) / 2);//2 * ncp / (right - left);
+        double w = h / ratio;
+        double a = fcp / (fcp - ncp);
+        double b = -ncp * fcp / (fcp - ncp);
+        double c = 0;
+        double d = 0;
+        return new Matrix3D(new double[][]{
+            {w, 0, 0, 0},
+            {0, h, 0, 0},
+            {c, d, a, 1},
+            {0, 0, b, 0}
+        });
+    }
+
+    public static double degToRad(double deg) {
+        return (Math.PI * deg) / 180;
     }
 }

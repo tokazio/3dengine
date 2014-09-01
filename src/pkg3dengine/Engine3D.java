@@ -15,24 +15,28 @@ import javafx.scene.image.ImageView;
  */
 public class Engine3D {
     
-    private Device3D device;
-    private Mesh3D mesh;
-    private ArrayList<Mesh3D> meshes;
+    private final Device3D device;
+    private final Mesh3D mesh;
+    private final ArrayList<Mesh3D> meshes;
     
     public Engine3D(ImageView img){
 	 //create a cube
         mesh = new Mesh3D("Cube");
-        mesh.add(new Vector3D(-1, 1, 1));
-        mesh.add(new Vector3D(1, 1, 1));
-        mesh.add(new Vector3D(-1, -1, 1));
-        mesh.add(new Vector3D(-1, -1, -1));
-        mesh.add(new Vector3D(-1, 1, -1));
-        mesh.add(new Vector3D(1, 1, -1));
-        mesh.add(new Vector3D(1, -1, 1));
-        mesh.add(new Vector3D(1, -1, -1));
+        //face avant
+        mesh.add(new Vector3D(-1, 1, -1));//a
+        mesh.add(new Vector3D(1, 1, -1));//b
+        mesh.add(new Vector3D(-1, -1, -1));//c
+        mesh.add(new Vector3D(1, -1, -1));//d
+        //face arrière
+        mesh.add(new Vector3D(-1, 1, 1));//e
+        mesh.add(new Vector3D(1, 1, 1));//f
+        mesh.add(new Vector3D(-1, -1, 1));//g
+        mesh.add(new Vector3D(1, -1, 1));//h
+        
+        
         //create the camera
         Camera3D camera = new Camera3D();
-        camera.setPosition(new Vector3D(0, 0, 10.0));
+        camera.setPosition(new Vector3D(0, 0, -10));
         camera.setTarget(Vector3D.zero());
 	//create the device
         device = new Device3D(img,camera);
