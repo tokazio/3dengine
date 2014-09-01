@@ -24,18 +24,18 @@ public class Device3D {
     private WritableImage FwImage;
     private PixelWriter FpixelWriter;
 
-    public Device3D(double width, double height,Camera3D camera) {
+    public Device3D(double width, double height, Camera3D camera) {
 	Fwidth = width;
 	Fheight = height;
 	init(camera);
     }
 
-    public Device3D(ImageView i,Camera3D camera) {
+    public Device3D(ImageView i, Camera3D camera) {
 	Fimg = i;
 	Fwidth = i.getFitWidth();
 	Fheight = i.getFitHeight();
-	
-	init(camera); 
+
+	init(camera);
     }
 
     // This method is called to clear the back buffer with a specific color
@@ -49,7 +49,76 @@ public class Device3D {
 
     // Called to put a pixel on screen at a specific X,Y coordinates
     public final void putPixel(double x, double y, RGBA color) {
-	FpixelWriter.setColor((int)x, (int)y, color.toColor());
+	FpixelWriter.setColor((int) x, (int) y, color.toColor());
+    }
+
+    public final void drawLine(Vector2D point0, Vector2D point1) {
+	double dist = Vector2D.sub(point1, point0).length();
+	// If the distance between the 2 points is less than 2 pixels
+	// We're exiting
+	if (dist < 2) {
+	    return;
+	}
+	// Find the middle point between first & second point
+	Vector2D middlePoint = Vector2D.add(point0, Vector2D.sub(point1, point0).mul(0.5));
+	// We draw this point on screen
+	drawPoint(middlePoint);
+	// Recursive algorithm launched between first & middle point
+	// and between middle & second point
+	drawLine(point0, middlePoint);
+	drawLine(middlePoint, point1);
+    }
+
+    public final void drawBLine(Vector2D point0, Vector2D point1) {
+	double w = point1.X() - point0.X();
+	double h = point1.Y() - point0.Y();
+	int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+	if (w < 0) {
+	    dx1 = -1;
+	} else if (w > 0) {
+	    dx1 = 1;
+	}
+	if (h < 0) {
+	    dy1 = -1;
+	} else if (h > 0) {
+	    dy1 = 1;
+	}
+	if (w < 0) {
+	    dx2 = -1;
+	} else if (w > 0) {
+	    dx2 = 1;
+	}
+	double longest = Math.abs(w);
+	double shortest = Math.abs(h);
+	double x = point0.X();
+	double y = point0.Y();
+	if (!(longest > shortest)) {
+	    longest = Math.abs(h);
+	    shortest = Math.abs(w);
+	    if (h < 0) {
+		dy2 = -1;
+	    } else if (h > 0) {
+		dy2 = 1;
+	    }
+	    dx2 = 0;
+	}
+	double numerator = bitRightShift(longest, 1.0);
+	for (int i = 0; i <= longest; i++) {
+	    drawPoint(new Vector2D(x, y));
+	    numerator += shortest;
+	    if (!(numerator < longest)) {
+		numerator -= longest;
+		x += dx1;
+		y += dy1;
+	    } else {
+		x += dx2;
+		y += dy2;
+	    }
+	}
+    }
+
+    private static double bitRightShift(double a, double b) {
+	return Double.longBitsToDouble(Double.doubleToRawLongBits(a) >> Double.doubleToRawLongBits(b));
     }
 
     // Project takes some 3D coordinates and transform them
@@ -57,7 +126,7 @@ public class Device3D {
     public final Vector2D project(Vector3D coord, Matrix3D transMat) {
 	// transforming the coordinates
 	Vector3D point = coord.transformCoordinate(transMat);
-        // The transformed coordinates will be based on coordinate system
+	// The transformed coordinates will be based on coordinate system
 	// starting on the center of the screen. But drawing on screen normally starts
 	// from top left. We then need to transform them again to have x:0, y:0 on top left.
 	double x = point.X() * Fwidth + Fwidth / 2.0;
@@ -80,7 +149,7 @@ public class Device3D {
 	FprojectionMatrix = Matrix3D.perspectiveFovLH(45.0, Fwidth / Fheight, 0.01, 100.0);
     }
 
-        // The main method of the engine that re-compute each vertex projection
+    // The main method of the engine that re-compute each vertex projection
     // during each frame
     public final void render(ArrayList<Mesh3D> meshes) {
 
@@ -95,15 +164,42 @@ public class Device3D {
 	    t = new Matrix3D[]{worldMatrix, FviewMatrix, FprojectionMatrix};
 	    Matrix3D transformMatrix = Matrix3D.multiply(t);
 
-	    for (int j = 0; j < mesh.getVertices().size(); j++) {
-		Vector3D vertex = mesh.getVertices().get(j);
-		// First, we project the 3D coordinates into the 2D space
-		Vector2D point = project(vertex, transformMatrix);
-		// Then we can draw on screen
-		drawPoint(point);
+	    /*
+	     //mode points
+	     for (int j = 0; j < mesh.getVertices().size(); j++) {
+	     Vector3D vertex = mesh.getVertices().get(j);
+	     // First, we project the 3D coordinates into the 2D space
+	     Vector2D point = project(vertex, transformMatrix);
+	     // Then we can draw on screen
+	     drawPoint(point);
+	     }
+	     */
+	    /*
+	     //mode line
+	     Vector3D vertex;
+	     for (int j = 0; j < mesh.getVertices().size() - 1; j++) {
+	     vertex = mesh.getVertices().get(j);
+
+	     Vector2D point0 = project(vertex, transformMatrix);
+	     vertex = mesh.getVertices().get(j + 1);
+	     Vector2D point1 = project(vertex, transformMatrix);
+	     drawBLine(point0, point1);
+	     }
+	     */
+	    //mode face
+	    for (int indexFaces = 0; indexFaces < mesh.getVertices().size(); indexFaces++) {
+		Face3D currentFace = mesh.getFaces().get(indexFaces);
+		Vector3D vertexA = mesh.getVertices().get(currentFace.A());
+		Vector3D vertexB = mesh.getVertices().get(currentFace.B());
+		Vector3D vertexC = mesh.getVertices().get(currentFace.C());
+		Vector2D pixelA = project(vertexA, transformMatrix);
+		Vector2D pixelB = project(vertexB, transformMatrix);
+		Vector2D pixelC = project(vertexC, transformMatrix);
+		drawLine(pixelA, pixelB);
+		drawLine(pixelB, pixelC);
+		drawLine(pixelC, pixelA);
 	    }
 	}
-
     }
 
     public final void present() {

@@ -10,5 +10,6 @@
       <Button layoutX="112.0" layoutY="534.0" mnemonicParsing="false" onAction="#rotxplus" text="Rot X +" />
       <Button layoutX="41.0" layoutY="480.0" mnemonicParsing="false" onAction="#rotyplus" text="Rot Y +" />
       <Button layoutX="14.0" layoutY="560.0" mnemonicParsing="false" onAction="#rotzplus" text="Rot Z +" />
+      <Button layoutX="17.0" layoutY="14.0" mnemonicParsing="false" onAction="#auto" text="Auto" />
 </children>
 </AnchorPane>

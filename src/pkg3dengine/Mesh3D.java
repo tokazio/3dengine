@@ -15,12 +15,14 @@ import java.util.ArrayList;
 public class Mesh3D {
     private final String Fname;
     private final ArrayList<Vector3D> Fvertices;
+    private final ArrayList<Face3D> Ffaces;
     private Vector3D Fposition;
     private Vector3D Frotation;
     
     public Mesh3D(String aName) {
         Fname=aName;
         Fvertices = new ArrayList();
+	Ffaces=new ArrayList();
         Fposition=Vector3D.zero();
         Frotation=Vector3D.zero();
     }
@@ -29,8 +31,16 @@ public class Mesh3D {
         Fvertices.add(aVector);
     }
     
+    public final void add(Face3D aFace){
+	Ffaces.add(aFace);
+    }
+    
     public final ArrayList<Vector3D> getVertices(){
         return Fvertices;
+    }
+    
+    public final ArrayList<Face3D> getFaces(){
+	return Ffaces;
     }
     
     public final Vector3D getRotation(){

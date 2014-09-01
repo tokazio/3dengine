@@ -26,4 +26,19 @@ public class Vector2D {
         return Fy;
     }
     
+    public static Vector2D sub(Vector2D a,Vector2D b){
+	return new Vector2D(a.X()-b.X(),a.Y()-b.Y());
+    }
+    
+    public static Vector2D add(Vector2D a,Vector2D b){
+	return new Vector2D(a.X()+b.X(),a.Y()+b.Y());
+    }
+    
+    public final Vector2D mul(double d){
+	return new Vector2D(X()*d,Y()*d);
+    }
+    
+    public final double length(){
+	return Math.sqrt((Fx * Fx) + (Fy * Fy));
+    }
 }

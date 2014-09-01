@@ -23,18 +23,29 @@ public class Engine3D {
 	 //create a cube
         mesh = new Mesh3D("Cube");
 	//org
-	mesh.add(new Vector3D(0.0, 0.0, 0.0));
-	//face arrière
-        mesh.add(new Vector3D(-1.0, 1.0, -1.0));//a
-        mesh.add(new Vector3D(1.0, 1.0, -1.0));//b
-        mesh.add(new Vector3D(-1.0, -1.0, -1.0));//c
-        mesh.add(new Vector3D(1.0, -1.0, -1.0));//d
-	
-	//face avant
-	mesh.add(new Vector3D(-1.0, 1.0, 1.0));//e
-        mesh.add(new Vector3D(1.0, 1.0, 1.0));//f
-        mesh.add(new Vector3D(-1.0, -1.0, 1.0));//g
-        mesh.add(new Vector3D(1.0, -1.0, 1.0));//h
+	//mesh.add(new Vector3D(0.0, 0.0, 0.0));
+	//points
+	mesh.add(new Vector3D(-1.0, 1.0, 1.0));//e 0
+        mesh.add(new Vector3D(1.0, 1.0, 1.0));//f 1
+        mesh.add(new Vector3D(-1.0, -1.0, 1.0));//g 2
+        mesh.add(new Vector3D(1.0, -1.0, 1.0));//h 3
+	mesh.add(new Vector3D(-1.0, 1.0, -1.0));//a 4
+        mesh.add(new Vector3D(1.0, 1.0, -1.0));//c 5
+        mesh.add(new Vector3D(1.0, -1.0, -1.0));//d 6
+        mesh.add(new Vector3D(-1.0, -1.0, -1.0));//b 7
+	//Faces	
+	mesh.add(new Face3D (4, 7, 6 ));//abd
+	mesh.add(new Face3D (4, 6, 5 ));//adc
+	mesh.add(new Face3D (0, 3, 2 ));//ehg
+	mesh.add(new Face3D (0, 1, 3 ));//efh
+	mesh.add(new Face3D (4, 0, 1 ));//aef
+	mesh.add(new Face3D (4, 5, 1 ));//acf
+	mesh.add(new Face3D (7, 2, 6 ));//bgd
+	mesh.add(new Face3D (2, 3, 6 ));//ghd
+	mesh.add(new Face3D (5, 1, 3 ));//cfh
+	mesh.add(new Face3D (5, 6, 3 ));//cdh
+	mesh.add(new Face3D (4, 0, 2 ));//aeg
+	mesh.add(new Face3D (4, 7, 2 ));//abg
 	
         
         //create the camera
@@ -54,8 +65,10 @@ public class Engine3D {
 	device.clear(0, 0, 0, 255);
 	// Doing the various matrix operations
         device.render(meshes);
-        // Flushing the back buffer into the front buffer
-        device.present();
+    }
+    
+    public final void flush(){
+	device.present();
     }
 
     public final void rotX(){
