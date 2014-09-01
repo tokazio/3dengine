@@ -59,4 +59,11 @@ public class Mesh3D {
         Frotation=v;
     }
     
+    public final int containVertice(Vector3D v){
+	for(int i=0;i<Fvertices.size();i++)
+	    if(Fvertices.get(i).equals(v))
+		return i;
+	return -1;
+    }
+    
 }

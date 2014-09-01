@@ -127,4 +127,8 @@ public class Vector3D {
     public static Vector3D sub(Vector3D a,Vector3D b){
         return new Vector3D(a.X()-b.X(),a.Y()-b.Y(),a.Z()-b.Z());
     }
+    
+    public final boolean equals(Vector3D v){
+	return (Fx==v.X() && Fy==v.Y() && Fz==v.Z());
+    }
 }

@@ -85,4 +85,71 @@ public class Engine3D {
         // rotating slightly the cube during each frame rendered
         mesh.setRotation(new Vector3D(mesh.getRotation().X(), mesh.getRotation().Y() , mesh.getRotation().Z()+ Matrix3D.degToRad(10.0)));
     }
+    
+    /*
+    http://people.sc.fsu.edu/~jburkardt/data/stla/stla.html
+    solid cube_corner
+          facet normal 0.0 -1.0 0.0
+            outer loop
+              vertex 0.0 0.0 0.0
+              vertex 1.0 0.0 0.0
+              vertex 0.0 0.0 1.0
+            endloop
+          endfacet
+          facet normal 0.0 0.0 -1.0
+            outer loop
+              vertex 0.0 0.0 0.0
+              vertex 0.0 1.0 0.0
+              vertex 1.0 0.0 0.0
+            endloop
+          endfacet
+          facet normal -1.0 0.0 0.0
+            outer loop
+              vertex 0.0 0.0 0.0
+              vertex 0.0 0.0 1.0
+              vertex 0.0 1.0 0.0
+            endloop
+          endfacet
+          facet normal 0.577 0.577 0.577
+            outer loop
+              vertex 1.0 0.0 0.0
+              vertex 0.0 1.0 0.0
+              vertex 0.0 0.0 1.0
+            endloop
+          endfacet
+    */
+    public final void loadSTL(){
+	//cherche la 1ère ligne contenant vertex
+	//les 2 suivantes cotiennent aussi vertex
+	addFace(s0,s1,s2);
+    }
+    
+    
+    private final void addFace(String s0,String s1,String s2){
+	String s;
+	Face3D f=new Face3D();
+	s=s0.replaceAll("vertex", "");
+	f.setA(addPoint(s));
+	s=s1.replaceAll("vertex", "");
+	f.setB(addPoint(s));
+	s=s2.replaceAll("vertex", "");
+	f.setC(addPoint(s));
+    }
+    
+    //vertex 0.0 0.0 0.0
+    private final int addPoint(String s){
+	String[]c=s.split("\\s");
+	double x=Double.parseDouble(c[0]);
+	double y=Double.parseDouble(c[1]);
+	double z=Double.parseDouble(c[2]);
+	Vector3D v=new Vector3D(x, y, z);
+	//si non présent
+	int i=mesh.containVertice(v);
+	if(i<0){
+	    mesh.add(v);
+	    return mesh.getVertices().size()-1;
+	}else{
+	    return i;
+	}
+    }
 }

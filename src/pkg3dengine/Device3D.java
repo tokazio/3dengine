@@ -45,6 +45,12 @@ public class Device3D {
 		FpixelWriter.setColor(x, y, new RGBA(r, g, b, a).toColor());
 	    }
 	}
+	/*
+	// Clearing Depth Buffer
+	for (int index = 0; index < depthBuffer.Length; index++) {
+	    depthBuffer.put(index) = Double.MAX_VALUE;
+	}
+	*/
     }
 
     // Called to put a pixel on screen at a specific X,Y coordinates
@@ -123,7 +129,7 @@ public class Device3D {
 
     // Project takes some 3D coordinates and transform them
     // in 2D coordinates using the transformation matrix
-    public final Vector2D project(Vector3D coord, Matrix3D transMat) {
+    public final Vector3D project(Vector3D coord, Matrix3D transMat) {
 	// transforming the coordinates
 	Vector3D point = coord.transformCoordinate(transMat);
 	// The transformed coordinates will be based on coordinate system
@@ -131,7 +137,7 @@ public class Device3D {
 	// from top left. We then need to transform them again to have x:0, y:0 on top left.
 	double x = point.X() * Fwidth + Fwidth / 2.0;
 	double y = -point.Y() * Fheight + Fheight / 2.0;
-	return (new Vector2D(x, y));
+	return (new Vector3D(x, y, coord.Z()));
     }
 
     // DrawPoint calls PutPixel but does the clipping operation before
@@ -186,24 +192,153 @@ public class Device3D {
 	     drawBLine(point0, point1);
 	     }
 	     */
-	    //mode face
-	    for (int indexFaces = 0; indexFaces < mesh.getVertices().size(); indexFaces++) {
-		Face3D currentFace = mesh.getFaces().get(indexFaces);
-		Vector3D vertexA = mesh.getVertices().get(currentFace.A());
-		Vector3D vertexB = mesh.getVertices().get(currentFace.B());
-		Vector3D vertexC = mesh.getVertices().get(currentFace.C());
-		Vector2D pixelA = project(vertexA, transformMatrix);
-		Vector2D pixelB = project(vertexB, transformMatrix);
-		Vector2D pixelC = project(vertexC, transformMatrix);
-		drawLine(pixelA, pixelB);
-		drawLine(pixelB, pixelC);
-		drawLine(pixelC, pixelA);
+	    /*
+	     //mode face
+	     for (int indexFaces = 0; indexFaces < mesh.getVertices().size(); indexFaces++) {
+	     Face3D currentFace = mesh.getFaces().get(indexFaces);
+	     Vector3D vertexA = mesh.getVertices().get(currentFace.A());
+	     Vector3D vertexB = mesh.getVertices().get(currentFace.B());
+	     Vector3D vertexC = mesh.getVertices().get(currentFace.C());
+	     Vector2D pixelA = project(vertexA, transformMatrix);
+	     Vector2D pixelB = project(vertexB, transformMatrix);
+	     Vector2D pixelC = project(vertexC, transformMatrix);
+	     drawLine(pixelA, pixelB);
+	     drawLine(pixelB, pixelC);
+	     drawLine(pixelC, pixelA);
+	     }
+	     */
+	    //mode shadow 1
+	    int faceIndex = 0;
+	    for (int j = 0; j < mesh.getFaces().size(); j++) {
+		Face3D face = mesh.getFaces().get(j);
+		Vector3D vertexA = mesh.getVertices().get(face.A());
+		Vector3D vertexB = mesh.getVertices().get(face.B());
+		Vector3D vertexC = mesh.getVertices().get(face.C());
+
+		Vector3D pixelA = project(vertexA, transformMatrix);
+		Vector3D pixelB = project(vertexB, transformMatrix);
+		Vector3D pixelC = project(vertexC, transformMatrix);
+
+		//var color = 0.25 + ((indexFaces % cMesh.Faces.length) / cMesh.Faces.length) * 0.75;
+		double color = 0.25 + (faceIndex % mesh.getFaces().size()) / mesh.getFaces().size() * 0.75;
+		drawTriangle(pixelA, pixelB, pixelC, new RGBA(color * 255, color * 255, color * 255, 1));
+		faceIndex++;
 	    }
 	}
     }
 
     public final void present() {
 	Fimg.setImage(FwImage);
+    }
+
+    public static double clamp(double value, double min, double max) {
+	return Math.max(min, Math.min(value, max));
+    }
+
+    // Interpolating the value between 2 vertices 
+    // min is the starting point, max the ending point
+    // and gradient the % between the 2 points
+    public static double Interpolate(double min, double max, double gradient) {
+	return min + (max - min) * clamp(gradient, 0, 1);
+    }
+
+    // drawing line between 2 points from left to right
+// papb -> pcpd
+// pa, pb, pc, pd must then be sorted before
+    public final void processScanLine(int y, Vector3D pa, Vector3D pb, Vector3D pc, Vector3D pd, RGBA color) {
+	// Thanks to current Y, we can compute the gradient to compute others values like
+	// the starting X (sx) and ending X (ex) to draw between
+	// if pa.Y == pb.Y or pc.Y == pd.Y, gradient is forced to 1
+	double gradient1 = pa.Y() != pb.Y() ? (y - pa.Y()) / (pb.Y() - pa.Y()) : 1;
+	double gradient2 = pc.Y() != pd.Y() ? (y - pc.Y()) / (pd.Y() - pc.Y()) : 1;
+
+	int sx = (int) Interpolate(pa.X(), pb.X(), gradient1);
+	int ex = (int) Interpolate(pc.X(), pd.X(), gradient2);
+
+	// drawing a line from left (sx) to right (ex) 
+	for (int x = sx; x < ex; x++) {
+	    drawPoint(new Vector2D(x, y, color));
+	}
+    }
+
+    public void drawTriangle(Vector3D p1, Vector3D p2, Vector3D p3, RGBA color) {
+	// Sorting the points in order to always have this order on screen p1, p2 & p3
+	// with p1 always up (thus having the Y the lowest possible to be near the top screen)
+	// then p2 between p1 & p3
+	if (p1.Y() > p2.Y()) {
+	    Vector3D temp = p2;
+	    p2 = p1;
+	    p1 = temp;
+	}
+
+	if (p2.Y() > p3.Y()) {
+	    Vector3D temp = p2;
+	    p2 = p3;
+	    p3 = temp;
+	}
+
+	if (p1.Y() > p2.Y()) {
+	    Vector3D temp = p2;
+	    p2 = p1;
+	    p1 = temp;
+	}
+
+	// inverse slopes
+	double dP1P2, dP1P3;
+
+	// http://en.wikipedia.org/wiki/Slope
+	// Computing inverse slopes
+	if (p2.Y() - p1.Y() > 0) {
+	    dP1P2 = (p2.X() - p1.X()) / (p2.Y() - p1.Y());
+	} else {
+	    dP1P2 = 0;
+	}
+
+	if (p3.Y() - p1.Y() > 0) {
+	    dP1P3 = (p3.X() - p1.X()) / (p3.Y() - p1.Y());
+	} else {
+	    dP1P3 = 0;
+	}
+
+	// First case where triangles are like that:
+	// P1
+	// -
+	// -- 
+	// - -
+	// -  -
+	// -   - P2
+	// -  -
+	// - -
+	// -
+	// P3
+	if (dP1P2 > dP1P3) {
+	    for (int y = (int) p1.Y(); y <= (int) p3.Y(); y++) {
+		if (y < p2.Y()) {
+		    processScanLine(y, p1, p3, p1, p2, color);
+		} else {
+		    processScanLine(y, p1, p3, p2, p3, color);
+		}
+	    }
+	} // First case where triangles are like that:
+	//       P1
+	//        -
+	//       -- 
+	//      - -
+	//     -  -
+	// P2 -   - 
+	//     -  -
+	//      - -
+	//        -
+	//       P3
+	else {
+	    for (int y = (int) p1.Y(); y <= (int) p3.Y(); y++) {
+		if (y < p2.Y()) {
+		    processScanLine(y, p1, p2, p1, p3, color);
+		} else {
+		    processScanLine(y, p2, p3, p1, p3, color);
+		}
+	    }
+	}
     }
 
 }

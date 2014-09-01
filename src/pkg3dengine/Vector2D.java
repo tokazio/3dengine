@@ -12,10 +12,17 @@ package pkg3dengine;
  */
 public class Vector2D {
     private double Fx,Fy,Fz;
+    private RGBA Fcolor;
     
     public Vector2D(double x, double y) {
         Fx=x;
         Fy=y;
+    }
+    
+    public Vector2D(double x, double y,RGBA color) {
+        Fx=x;
+        Fy=y;
+	Fcolor=color;
     }
     
     public final double X(){

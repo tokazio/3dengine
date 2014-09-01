@@ -15,6 +15,10 @@ public class Face3D {
     private int Fb;
     private int Fc;
     
+    public Face3D(){
+	
+    }
+    
     public Face3D(int a,int b,int c){
 	Fa=a;
 	Fb=b;
@@ -31,5 +35,17 @@ public class Face3D {
     
     public final int C(){
 	return Fc;
+    }
+    
+    public final void setA(int i){
+	Fa=i;
+    }
+    
+    public final void setB(int i){
+	Fb=i;
+    }
+    
+    public final void setC(int i){
+	Fc=i;
     }
 }
