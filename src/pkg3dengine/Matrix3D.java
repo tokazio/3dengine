@@ -33,7 +33,7 @@ public class Matrix3D {
      * @param aVector
      */
     public Matrix3D(Vector3D aVector) {
-        Fmat = new double[][]{{aVector.X(), 0, 0, 0}, {aVector.Y(), 0, 0, 0}, {aVector.Z(), 0, 0, 0}, {0, 0, 0, 0}};
+        Fmat = new double[][]{{aVector.X(), 0.0, 0.0, 0.0}, {aVector.Y(), 0.0, 0.0, 0.0}, {aVector.Z(), 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
     }
 
     /**
@@ -44,7 +44,7 @@ public class Matrix3D {
      * @param d
      */
     public Matrix3D(double a, double b, double c, double d) {
-        Fmat = new double[][]{{a, 0, 0, 0}, {b, 0, 0, 0}, {c, 0, 0, 0}, {d, 0, 0, 0}};
+        Fmat = new double[][]{{a, 0.0, 0.0, 0.0}, {b, 0.0, 0.0, 0.0}, {c, 0.0, 0.0, 0.0}, {d, 0.0, 0.0, 0.0}};
     }
 
     public final double get(int row, int col) {
@@ -269,10 +269,10 @@ public class Matrix3D {
         double BD = B * D;
 
         return new Matrix3D(new double[][]{
-            {C * E, -C * F, D, 0},
-            {BD * E + A * F, -BD * F + A * E, -B * C, 0},
-            {-AD * E + B * F, AD * F + B * E, A * C, 0},
-            {0, 0, 0, 1}
+            {C * E, -C * F, D, 0.0},
+            {BD * E + A * F, -BD * F + A * E, -B * C, 0.0},
+            {-AD * E + B * F, AD * F + B * E, A * C, 0.0},
+            {0.0, 0.0, 0.0, 1.0}
         });
 
     }
@@ -290,10 +290,10 @@ public class Matrix3D {
         Vector3D xaxis = Vector3D.cross(head, zaxis).normal();// The "right" vector.
         Vector3D yaxis = Vector3D.cross(zaxis, xaxis).normal();     // The "up" vector.
         return new Matrix3D(new double[][]{
-            {xaxis.X(), yaxis.X(), zaxis.X(), 0},
-            {xaxis.Y(), yaxis.Y(), zaxis.Y(), 0},
-            {xaxis.Z(), yaxis.Z(), zaxis.Z(), 0},
-            {-Vector3D.dot(xaxis, eye), -Vector3D.dot(yaxis, eye), -Vector3D.dot(zaxis, eye), 1}
+            {xaxis.X(), yaxis.X(), zaxis.X(), 0.0},
+            {xaxis.Y(), yaxis.Y(), zaxis.Y(), 0.0},
+            {xaxis.Z(), yaxis.Z(), zaxis.Z(), 0.0},
+            {-Vector3D.dot(xaxis, eye), -Vector3D.dot(yaxis, eye), -Vector3D.dot(zaxis, eye), 1.0}
         });
     }
 
@@ -311,17 +311,17 @@ public class Matrix3D {
         double w = h / ratio;
         double a = fcp / (fcp - ncp);
         double b = -ncp * fcp / (fcp - ncp);
-        double c = 0;
-        double d = 0;
+        double c = 0.0;
+        double d = 0.0;
         return new Matrix3D(new double[][]{
-            {w, 0, 0, 0},
-            {0, h, 0, 0},
-            {c, d, a, 1},
-            {0, 0, b, 0}
+            {w, 0.0, 0.0, 0.0},
+            {0.0, h, 0.0, 0.0},
+            {c, d, a, 1.0},
+            {0.0, 0.0, b, 0.0}
         });
     }
 
     public static double degToRad(double deg) {
-        return (Math.PI * deg) / 180;
+        return (Math.PI * deg) / 180.0;
     }
 }

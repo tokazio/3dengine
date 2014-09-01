@@ -7,6 +7,8 @@
 
 <AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkg3dengine.FXMLDocumentController">
 <children><ImageView fx:id="img" fitHeight="600.0" fitWidth="800.0" layoutX="52.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Button layoutX="14.0" layoutY="548.0" mnemonicParsing="false" onAction="#clic" text="Button" />
+      <Button layoutX="112.0" layoutY="534.0" mnemonicParsing="false" onAction="#rotxplus" text="Rot X +" />
+      <Button layoutX="41.0" layoutY="480.0" mnemonicParsing="false" onAction="#rotyplus" text="Rot Y +" />
+      <Button layoutX="14.0" layoutY="560.0" mnemonicParsing="false" onAction="#rotzplus" text="Rot Z +" />
 </children>
 </AnchorPane>

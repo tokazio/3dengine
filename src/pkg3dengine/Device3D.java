@@ -27,8 +27,6 @@ public class Device3D {
     public Device3D(double width, double height,Camera3D camera) {
 	Fwidth = width;
 	Fheight = height;
-	FwImage = new WritableImage((int) Fwidth, (int) Fheight);
-	FpixelWriter = FwImage.getPixelWriter();
 	init(camera);
     }
 
@@ -36,8 +34,7 @@ public class Device3D {
 	Fimg = i;
 	Fwidth = i.getFitWidth();
 	Fheight = i.getFitHeight();
-	FwImage = new WritableImage((int) Fwidth, (int) Fheight);
-	FpixelWriter = FwImage.getPixelWriter();
+	
 	init(camera); 
     }
 
@@ -60,7 +57,7 @@ public class Device3D {
     public final Vector2D project(Vector3D coord, Matrix3D transMat) {
 	// transforming the coordinates
 	Vector3D point = coord.transformCoordinate(transMat);
-            // The transformed coordinates will be based on coordinate system
+        // The transformed coordinates will be based on coordinate system
 	// starting on the center of the screen. But drawing on screen normally starts
 	// from top left. We then need to transform them again to have x:0, y:0 on top left.
 	double x = point.X() * Fwidth + Fwidth / 2.0;
@@ -77,8 +74,10 @@ public class Device3D {
     }
 
     public final void init(Camera3D camera) {
+	FwImage = new WritableImage((int) Fwidth, (int) Fheight);
+	FpixelWriter = FwImage.getPixelWriter();
 	FviewMatrix = Matrix3D.lookAtLH(camera.getPosition(), camera.getTarget(), camera.getHead());
-	FprojectionMatrix = Matrix3D.perspectiveFovLH(45, Fwidth / Fheight, 1, 100.0);
+	FprojectionMatrix = Matrix3D.perspectiveFovLH(45.0, Fwidth / Fheight, 0.01, 100.0);
     }
 
         // The main method of the engine that re-compute each vertex projection
@@ -88,7 +87,7 @@ public class Device3D {
 	for (int i = 0; i < meshes.size(); i++) {
 	    Mesh3D mesh = meshes.get(i);
 	    // Beware to apply rotation before translation 
-	    Matrix3D rotMat = Matrix3D.rotation(mesh.getRotation().X(), mesh.getRotation().Y(), mesh.getRotation().Z());
+	    Matrix3D rotMat = Matrix3D.rotation(mesh.getRotation());//.X(), mesh.getRotation().Y(), mesh.getRotation().Z());
 	    Matrix3D transMat = Matrix3D.translation(mesh.getPosition());
 	    Matrix3D[] t;
 	    t = new Matrix3D[]{rotMat, transMat};
