@@ -24,9 +24,7 @@ public class Engine3D {
         mesh = new Mesh3D("Cube");
 	//org
 	mesh.add(new Vector3D(0.0, 0.0, 0.0));
-	/*
 	//face arrière
-	//z<0 ne s'affiche pas?
         mesh.add(new Vector3D(-1.0, 1.0, -1.0));//a
         mesh.add(new Vector3D(1.0, 1.0, -1.0));//b
         mesh.add(new Vector3D(-1.0, -1.0, -1.0));//c
@@ -37,19 +35,7 @@ public class Engine3D {
         mesh.add(new Vector3D(1.0, 1.0, 1.0));//f
         mesh.add(new Vector3D(-1.0, -1.0, 1.0));//g
         mesh.add(new Vector3D(1.0, -1.0, 1.0));//h
-	*/
-	//face arrière
-	//z<0 ne s'affiche pas?
-        mesh.add(new Vector3D(-1.0, 1.0, 3.0));//a
-        mesh.add(new Vector3D(1.0, 1.0, 3.0));//b
-        mesh.add(new Vector3D(-1.0, -1.0, 3.0));//c
-        mesh.add(new Vector3D(1.0, -1.0, 3.0));//d
 	
-	//face avant
-	mesh.add(new Vector3D(-1.0, 1.0, 1.0));//e
-        mesh.add(new Vector3D(1.0, 1.0, 1.0));//f
-        mesh.add(new Vector3D(-1.0, -1.0, 1.0));//g
-        mesh.add(new Vector3D(1.0, -1.0, 1.0));//h
         
         //create the camera
         Camera3D camera = new Camera3D();

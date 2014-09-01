@@ -67,7 +67,7 @@ public class Vector3D {
 	double d=X()*b.get(0,0)+Y()*b.get(1,0)+Z()*b.get(2,0)+b.get(3,0);
 	double e=X()*b.get(0,1)+Y()*b.get(1,1)+Z()*b.get(2,1)+b.get(3,1);
 	double f=X()*b.get(0,2)+Y()*b.get(1,2)+Z()*b.get(2,2)+b.get(3,2);
-	double g=X()*b.get(0,3)+Y()*b.get(1,3)+Z()*b.get(3,3)+b.get(3,3);
+	double g=X()*b.get(0,3)+Y()*b.get(1,3)+Z()*b.get(2,3)+b.get(3,3);
         return new Vector3D(d/g,e/g,f/g);
     }
 
