@@ -18,6 +18,8 @@ public class Camera3D {
     
     public Camera3D(){
         // Head is up (set to 0,-1,0 to look upside-down)
+	Fposition=Vector3D.zero();
+	Ftarget=Vector3D.zero();
         Fhead=new Vector3D(0.0,-1.0,0.0);
     }
     

@@ -46,6 +46,10 @@ public class Matrix3D {
         Fmat = new double[][]{{a, 0, 0, 0}, {b, 0, 0, 0}, {c, 0, 0, 0}, {d, 0, 0, 0}};
     }
 
+    public final double get(int row,int col){
+	return Fmat[row][col];
+    }
+    
     /**
      *
      * @param a
@@ -273,10 +277,10 @@ public class Matrix3D {
 
     }
     
-    public static Matrix3D lookAtRH(Vector3D eye,Vector3D target,Vector3D head){
+    public static Matrix3D lookAtLH(Vector3D eye,Vector3D target,Vector3D head){
         Vector3D zaxis = Vector3D.sub(eye,target).normal();    // The "forward" vector.
         Vector3D xaxis = Vector3D.cross(head, zaxis).normal();// The "right" vector.
-        Vector3D yaxis = Vector3D.cross(zaxis, xaxis);     // The "up" vector.
+        Vector3D yaxis = Vector3D.cross(zaxis, xaxis).normal();     // The "up" vector.
  
     // Create a 4x4 view matrix from the right, up, forward and eye position vectors
     return new Matrix3D(new double[][]{
@@ -300,18 +304,18 @@ public class Matrix3D {
         });
     }
     
-    public static Matrix3D perspectiveFovRH(double FoV,double ratio,double ncp, double fcp){
-        //private double FoV=45;         // The horizontal Field of View, in degrees : the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
+    public static Matrix3D perspectiveFovLH(double FoV,double ratio,double ncp, double fcp){
+        //	a.Matrix.PerspectiveFovLHToRef(b->Math.PI/2->a,c->1,d.minZ,d.maxZ,this._projectionMatrix)
+	//private double FoV=45;         // The horizontal Field of View, in degrees : the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
         //private double Fratio=4.0 / 3.0; // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
         //private double Fncp=0.1;        // Near clipping plane. Keep as big as possible, or you'll get precision issues.
         //private double Ffcp=100.0;       // Far clipping plane. Keep as little as possible.
-        double size = ncp * Math.tan(degToRad(FoV) / 2.0); 
-        double left = -size, right = size, bottom = -size / ratio, top = size / ratio;
-        return new Matrix3D(new double[][]{
-            {2 * ncp / (right - left),0,0,0},
-            {0, 2 * ncp / (top - bottom),0,0},
-            {(right + left) / (right - left),(top + bottom) / (top - bottom),-(fcp + ncp) / (fcp - ncp),-1},
-            {0,0,-(2 * fcp * ncp) / (fcp - ncp),0}            
+        double f = 1/Math.tan(0.5*degToRad(FoV)); 
+	return new Matrix3D(new double[][]{
+            {f/ratio,0,0,0},
+            {0, f,0,0},
+            {0,0,-ncp/(fcp-ncp),1},
+            {0,0,(fcp * ncp) / (fcp - ncp),0}     
         });
     }
 

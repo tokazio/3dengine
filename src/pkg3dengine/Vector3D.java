@@ -35,10 +35,12 @@ public class Vector3D {
         return new Vector3D(0,0,0);
     }
     
-    public final Vector2D transformCoordinate(Matrix3D transMat){
-        double x=0;
-        double y=0;
-        return new Vector2D(x,y);
+    public final Vector3D transformCoordinate(Matrix3D b){
+	double d=X()*b.get(0,0)+Y()*b.get(1,0)+Z()*b.get(2,0)+b.get(3,0);
+	double e=X()*b.get(0,1)+Y()*b.get(1,1)+Z()*b.get(2,1)+b.get(3,1);
+	double f=X()*b.get(0,2)+Y()*b.get(1,2)+Z()*b.get(2,2)+b.get(3,2);
+	double g=X()*b.get(0,3)+Y()*b.get(1,3)+Z()*b.get(3,3)+b.get(3,3);
+        return new Vector3D(d/g,e/g,f/g);
     }
 
     /**
@@ -79,6 +81,11 @@ public class Vector3D {
     }
     
     public static Vector3D sub(Vector3D a,Vector3D b){
-        return new Vector3D(a.X()-b.X(),a.Y() -b.Y(),a.Z()-b.Z());
+	/*
+	b.r=this.r-a.r,
+	b.g=this.g-a.g,
+	b.b=this.b-a.b
+	*/
+        return new Vector3D(b.X()-a.X(),b.Y()-a.Y(),b.Z()-a.Z());
     }
 }
