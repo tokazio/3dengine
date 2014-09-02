@@ -11,9 +11,9 @@ package pkg3dengine;
  * @author romainpetit
  */
 public class Face3D {
-    private int Fa;
-    private int Fb;
-    private int Fc;
+    private int Fa=-1;
+    private int Fb=-1;
+    private int Fc=-1;
     
     public Face3D(){
 	
@@ -37,15 +37,31 @@ public class Face3D {
 	return Fc;
     }
     
+    /**
+     * Défini l'index du vertex utilisé pour le point A du triangle dans la liste des vertex
+     * @param i 
+     */
     public final void setA(int i){
 	Fa=i;
     }
     
+    /**
+     * Défini l'index du vertex utilisé pour le point B du triangle dans la liste des vertex
+     * @param i 
+     */
     public final void setB(int i){
 	Fb=i;
     }
     
+    /**
+     * Défini l'index du vertex utilisé pour le point C du triangle dans la liste des vertex
+     * @param i 
+     */
     public final void setC(int i){
 	Fc=i;
+    }
+    
+    public final void print(){
+        System.out.println("A:"+Fa+" B:"+Fb+" C:"+Fc);
     }
 }

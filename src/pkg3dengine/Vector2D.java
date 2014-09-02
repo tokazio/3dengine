@@ -33,6 +33,10 @@ public class Vector2D {
         return Fy;
     }
     
+    public final RGBA color(){
+        return Fcolor;
+    }
+    
     public static Vector2D sub(Vector2D a,Vector2D b){
 	return new Vector2D(a.X()-b.X(),a.Y()-b.Y());
     }

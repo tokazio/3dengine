@@ -37,10 +37,6 @@ public class RGBA {
      * @return 
      */
     public Color toColor(){
-        if(Alpha>1) Alpha=1;
-        Red=Red/255;
-        Green=Green/255;
-        Blue=Blue/255;
         return new Color(Red,Green,Blue,Alpha);
     }
 }

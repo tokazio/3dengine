@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkg3dengine.FXMLDocumentController">
 <children><ImageView fx:id="img" fitHeight="600.0" fitWidth="800.0" layoutX="52.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Button layoutX="112.0" layoutY="534.0" mnemonicParsing="false" onAction="#rotxplus" text="Rot X +" />
-      <Button layoutX="41.0" layoutY="480.0" mnemonicParsing="false" onAction="#rotyplus" text="Rot Y +" />
-      <Button layoutX="14.0" layoutY="560.0" mnemonicParsing="false" onAction="#rotzplus" text="Rot Z +" />
-      <Button layoutX="17.0" layoutY="14.0" mnemonicParsing="false" onAction="#auto" text="Auto" />
+      <Button layoutX="251.0" layoutY="535.0" mnemonicParsing="false" onAction="#rotxplus" text="Rot X +" />
+      <Button layoutX="195.0" layoutY="504.0" mnemonicParsing="false" onAction="#rotyplus" text="Rot Y +" />
+      <Button layoutX="326.0" layoutY="560.0" mnemonicParsing="false" onAction="#rotzplus" text="Rot Z +" />
+      <Button layoutX="17.0" layoutY="14.0" mnemonicParsing="false" onAction="#auto" text="Auto" /><Button layoutX="143.1875" layoutY="535.0" mnemonicParsing="false" onAction="#rotxmoins" text="Rot X -" /><Button layoutX="197.1875" layoutY="560.0" mnemonicParsing="false" onAction="#rotymoins" text="Rot Y -" /><Button layoutX="74.1875" layoutY="560.0" mnemonicParsing="false" onAction="#rotzmoins" text="Rot Z -" /><Button layoutX="74.375" layoutY="479.0" mnemonicParsing="false" onAction="#zoommoins" text="Zoom -" /><Button layoutX="328.0" layoutY="479.0" mnemonicParsing="false" onAction="#zoomplus" text="Zoom +" />
 </children>
 </AnchorPane>

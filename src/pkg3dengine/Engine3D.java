@@ -6,7 +6,12 @@
 
 package pkg3dengine;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.scene.image.ImageView;
 
 /**
@@ -16,11 +21,12 @@ import javafx.scene.image.ImageView;
 public class Engine3D {
     
     private final Device3D device;
-    private final Mesh3D mesh;
+    //private final Mesh3D mesh;
     private final ArrayList<Mesh3D> meshes;
     
     public Engine3D(ImageView img){
-	 //create a cube
+        /*
+	//create a cube
         mesh = new Mesh3D("Cube");
 	//org
 	//mesh.add(new Vector3D(0.0, 0.0, 0.0));
@@ -46,23 +52,27 @@ public class Engine3D {
 	mesh.add(new Face3D (5, 6, 3 ));//cdh
 	mesh.add(new Face3D (4, 0, 2 ));//aeg
 	mesh.add(new Face3D (4, 7, 2 ));//abg
-	
+	*/
         
         //create the camera
         Camera3D camera = new Camera3D();
-        camera.setPosition(new Vector3D(0.0, 0.0, -10.0));
+        camera.setPosition(new Vector3D(0.0, 0.0, -1000.0));
         camera.setTarget(Vector3D.zero());
 	//create the device
         device = new Device3D(img,camera);
 	//add cube to engine
         meshes = new ArrayList();
-        meshes.add(mesh);        
+        //meshes.add(mesh);        
         //
-	render();
 	}
     
+    public final void add(Mesh3D mesh){
+        meshes.add(mesh);
+        meshes.get(meshes.size()-1).print();
+    }
+    
     public final void render(){
-	device.clear(0, 0, 0, 255);
+	device.clear(0, 0, 0, 1);
 	// Doing the various matrix operations
         device.render(meshes);
     }
@@ -71,85 +81,34 @@ public class Engine3D {
 	device.present();
     }
 
-    public final void rotX(){
+    public final void rotX(int i){
         // rotating slightly the cube during each frame rendered
-        mesh.setRotation(new Vector3D(mesh.getRotation().X() + Matrix3D.degToRad(10.0), mesh.getRotation().Y(), mesh.getRotation().Z()));
+        meshes.get(0).setRotation(new Vector3D(meshes.get(0).getRotation().X() + Matrix3D.degToRad(i), meshes.get(0).getRotation().Y(), meshes.get(0).getRotation().Z()));
     }
     
-    public final void rotY(){
+    public final void rotY(int i){
         // rotating slightly the cube during each frame rendered
-        mesh.setRotation(new Vector3D(mesh.getRotation().X(), mesh.getRotation().Y() + Matrix3D.degToRad(10.0), mesh.getRotation().Z()));
+        meshes.get(0).setRotation(new Vector3D(meshes.get(0).getRotation().X(),meshes.get(0).getRotation().Y() + Matrix3D.degToRad(i), meshes.get(0).getRotation().Z()));
     }
     
-    public final void rotZ(){
+    public final void rotZ(int i){
         // rotating slightly the cube during each frame rendered
-        mesh.setRotation(new Vector3D(mesh.getRotation().X(), mesh.getRotation().Y() , mesh.getRotation().Z()+ Matrix3D.degToRad(10.0)));
+        meshes.get(0).setRotation(new Vector3D(meshes.get(0).getRotation().X(), meshes.get(0).getRotation().Y() , meshes.get(0).getRotation().Z()+ Matrix3D.degToRad(i)));
     }
-    
-    /*
-    http://people.sc.fsu.edu/~jburkardt/data/stla/stla.html
-    solid cube_corner
-          facet normal 0.0 -1.0 0.0
-            outer loop
-              vertex 0.0 0.0 0.0
-              vertex 1.0 0.0 0.0
-              vertex 0.0 0.0 1.0
-            endloop
-          endfacet
-          facet normal 0.0 0.0 -1.0
-            outer loop
-              vertex 0.0 0.0 0.0
-              vertex 0.0 1.0 0.0
-              vertex 1.0 0.0 0.0
-            endloop
-          endfacet
-          facet normal -1.0 0.0 0.0
-            outer loop
-              vertex 0.0 0.0 0.0
-              vertex 0.0 0.0 1.0
-              vertex 0.0 1.0 0.0
-            endloop
-          endfacet
-          facet normal 0.577 0.577 0.577
-            outer loop
-              vertex 1.0 0.0 0.0
-              vertex 0.0 1.0 0.0
-              vertex 0.0 0.0 1.0
-            endloop
-          endfacet
-    */
-    public final void loadSTL(){
-	//cherche la 1ère ligne contenant vertex
-	//les 2 suivantes cotiennent aussi vertex
-	addFace(s0,s1,s2);
+
+    void camZ(int i) {
+        Camera3D c=device.getCamera();
+        c.setPosition(new Vector3D(c.getPosition().X(),c.getPosition().Y(),c.getPosition().Z()+i));
+        device.editCamera();
+    }
+
+    void iniRotX() {
+        meshes.get(0).setRotation(new Vector3D(0,meshes.get(0).getRotation().Y(),meshes.get(0).getRotation().Z()));
+    }
+
+    void iniRotY() {
+        meshes.get(0).setRotation(new Vector3D(meshes.get(0).getRotation().X(),0,meshes.get(0).getRotation().Z()));
     }
     
     
-    private final void addFace(String s0,String s1,String s2){
-	String s;
-	Face3D f=new Face3D();
-	s=s0.replaceAll("vertex", "");
-	f.setA(addPoint(s));
-	s=s1.replaceAll("vertex", "");
-	f.setB(addPoint(s));
-	s=s2.replaceAll("vertex", "");
-	f.setC(addPoint(s));
-    }
-    
-    //vertex 0.0 0.0 0.0
-    private final int addPoint(String s){
-	String[]c=s.split("\\s");
-	double x=Double.parseDouble(c[0]);
-	double y=Double.parseDouble(c[1]);
-	double z=Double.parseDouble(c[2]);
-	Vector3D v=new Vector3D(x, y, z);
-	//si non présent
-	int i=mesh.containVertice(v);
-	if(i<0){
-	    mesh.add(v);
-	    return mesh.getVertices().size()-1;
-	}else{
-	    return i;
-	}
-    }
 }

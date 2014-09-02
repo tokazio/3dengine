@@ -12,6 +12,7 @@ package pkg3dengine;
  */
 public class Vector3D {
     private double Fx,Fy,Fz;
+    private RGBA Fcolor;
     
     /**
      * 
@@ -23,6 +24,13 @@ public class Vector3D {
         Fx=x;
         Fy=y;
         Fz=z;
+    }
+    
+    public Vector3D(double x, double y, double z,RGBA color) {
+        Fx=x;
+        Fy=y;
+        Fz=z;
+        Fcolor=color;
     }
     
     /**
@@ -47,6 +55,10 @@ public class Vector3D {
      */
     public final double Z(){
         return Fz;
+    }
+    
+    public final RGBA color(){
+        return Fcolor;
     }
     
     /**
@@ -130,5 +142,9 @@ public class Vector3D {
     
     public final boolean equals(Vector3D v){
 	return (Fx==v.X() && Fy==v.Y() && Fz==v.Z());
+    }
+    
+    public final void print(){
+        System.out.println(Fx+","+Fy+","+Fz);
     }
 }
