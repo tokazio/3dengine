@@ -36,7 +36,7 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 	engine = new Engine3D(img);
-        engine.add(new Mesh3D("BALPLATGC").loadSTLfromFile("BALPLATGC.stl"));
+        engine.add(new Mesh3D("mesh").loadSTLfromFile("a.stl"));
         
         img.setOnMouseClicked(new EventHandler<MouseEvent>() {
     @Override
